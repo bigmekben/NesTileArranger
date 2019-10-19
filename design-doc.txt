@@ -1,0 +1,35 @@
+NesTileArranger
+
+Goals:
+
+To make it easy to create .bin files representing background level arrangements for NES games.
+The .bin files will be included in the assembly source.
+While working on the arrangement, the file gets saved in a format that only makes sense to this editor.
+Then, an export button causes the .bin file to be created in a format that the NES file can interpret at runtime.
+Note: the code that interprets the .bin file still needs to be written, and runs on the NES.
+
+Here is the design of the recursive meta tiles:
+-Given that each background tile on the NES is 8x8 pixels;
+-Given that each background tile is indicated by an 8-bit number indicating how many "tiles" into the name table this tile is;
+-Given that every 2x2 tile block (i.e. 16x16 pixel on screen block) shares the same palette;
+-Given that there is no special code needed to convert a 8-bit number into the graphic data for exact tile indicated, that is,
+ if provided with the 8x8pixel tile number, the Nintendo will automatically fetch the correct graphics from the name table;
+--Define a meta-tile type named "M1" which is 2x2 tiles, that is, four tiles, representing 16x16 on screen pixels.
+--An M1 tile is named with an 8-bit number.  So increasing M1 by 1 means jumping over four bytes.
+--The M1 tiles are defined in a table in sets of four bytes.  Each set of four bytes is the next M1.  So asking for M1 of 7 will skip 28 bytes and read
+  bytes 29 through 32.  Asking for M1 of 0 will start reading bytes 0 through 3.  Let's call this the M1 table.
+--If there are 100 M1 tiles, then the M1 table is 400 bytes.
+--Since the screen is 32x30 tiles, the screen can be represented by 16x15 M1 tiles.  However, on NTSC, the top half of the first row will be
+  offscreen, and the bottom half of the bottom row of M1 tiles will be offscreen.  Note that the attribute table restriction doesn't forgive this,
+  so pixels 8 through 23 (that appear on screen) share attributes, since 8 are already offscreen but still count toward the attribute table grouping.
+[The editor must take into account whether the cartridge uses V or H mirroring.  If it uses mapper-controlled mirroring, that will need to be
+  taken into account, too.]
+  
+[[For Horizontal Mirroring, that is, vertical scrolling like Kid Icarus]]
+-Given that two screens stacked on top of each other is 32x60 tiles;
+-Given 
+
+[[For Vertical Mirroring, that is, horizontal scrolling like Super Mario Bros.]]
+
+Here are the features that the editor will have:
+
